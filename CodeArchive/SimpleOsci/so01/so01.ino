@@ -76,7 +76,7 @@ void BinProcess(double bin[]) //processes the bins
   int high;
 
   double divisor;
-  divisor = (SAMPLES / 2 ) / 256;
+  divisor = SAMPLES;
 
   for(int i=0; i<(SAMPLES/2); i++)
   {
@@ -97,7 +97,7 @@ void BinProcess(double bin[]) //processes the bins
   low = low  / divisor;
   mid = mid / divisor;
   high = high / divisor;
-
+  Serial.println(high); 
   ///lows will be blue
   ///mids will be green
   ///highs will be red
