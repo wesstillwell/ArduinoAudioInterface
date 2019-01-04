@@ -24,7 +24,7 @@ void loop() {
     {
         microseconds = micros();    //Overflows after around 70 minutes!
      
-        vReal[i] = analogRead(0);
+        vReal[i] = analogRead(A0);
         vImag[i] = 0;
      
         while(micros() < (microseconds + sampling_period_us)){
@@ -38,17 +38,17 @@ void loop() {
     double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY);
  
     /*PRINT RESULTS*/
-    //Serial.println(peak);     //Print out what frequency is the most dominant.
- 
+    Serial.println(" ");
+    Serial.println(peak);     //Print out what frequency is the most dominant.
+    Serial.println(" ");
     for(int i=0; i<(SAMPLES/2); i++)
     {
         /*View all these three lines in serial terminal to see which frequencies has which amplitudes*/
          
-        //Serial.print((i * 1.0 * SAMPLING_FREQUENCY) / SAMPLES, 1);
-        //Serial.print(" ");
-        Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
+        Serial.print((i * 1.0 * SAMPLING_FREQUENCY) / SAMPLES, 1);
+        Serial.print(" . ");
+       Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
     }
- 
-    //delay(1000);  //Repeat the process every second OR:
-    while(1);       //Run code once
+    delay(1000);  //Repeat the process every second OR:
+   // while(1);       //Run code once
 }
