@@ -10,3 +10,5 @@ Documentation
 -built lowpass, works perfectly, but will be interesting to see whta happens to high pitch songs, as high frequencys get compresst
 -changed frequency badn now with a resolution of 128 samples making 64 bands
 -20 bands per colour
+-finally have the first working protoype
+-need to adjust bands as upper one is not utilized with my lopass filter

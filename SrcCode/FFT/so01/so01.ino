@@ -102,7 +102,7 @@ void BinProcess(double bin[], double peak) //processes the bins
         }
         else if(i > 43)
         {
-          mid = mid + bin[i];
+          treble = treble + bin[i];
         }
         else 
         {
