@@ -116,10 +116,9 @@ void BinProcess(double bin[], double peak) //processes the bins
     mid = (mid / 22) / wMID;
     treble = (treble / 22)/wTREBLE ;
 
-    if(bass > 255 || mid > 255 || treble > 255)
-    {
-      Serial.println("OVERFLOW");  
-    }
+  bass = Cutoff(bass);
+  mid = Cutoff(mid);
+  treble = Cutoff(treble);
     
   Serial.print(treble); 
   Serial.print("h "); 
@@ -140,4 +139,15 @@ void LightOutput()
     analogWrite(PRED, treble);
     analogWrite(PGREEN, mid);
     analogWrite(PBLUE, bass);
+}
+
+int Cutoff(int value)
+{
+    if(value > 255)
+    { 
+      return 255;
+    }
+
+    return value;
+      
 }
