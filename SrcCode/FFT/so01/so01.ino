@@ -21,12 +21,15 @@ unsigned int treble= 0;
  
 void setup() {
     Serial.begin(115200);
- 
+    pinMode(PRED, OUTPUT); 
+    pinMode(PBLUE, OUTPUT); 
+    pinMode(PGREEN, OUTPUT); 
+    
     sampling_period_us = round(1000000*(1.0/SAMPLING_FREQUENCY));
 }
  
 void loop() {
-   
+   LightOutput();
     /*SAMPLING*/
     for(int i=0; i<SAMPLES; i++)
     {
@@ -104,9 +107,9 @@ void BinProcess(double bin[], double peak) //processes the bins
     }
 
     //get the average of bass mid and treble then convert it to about a 255 range
-    bass = (bass / 20)/800 * 255;
-    mid = (mid / 22)/800 * 255;
-    treble = (treble / 22) /800 * 255;
+    bass = (bass / 20)/ 5;
+    mid = (mid / 22) / 5;
+    treble = (treble / 22)/5 ;
 
     if(bass > 255 || mid > 255 || treble > 255)
     {
@@ -124,7 +127,7 @@ void BinProcess(double bin[], double peak) //processes the bins
   ///trebles will be red
   
 
-  LightOutput();
+  
 }
 
 void LightOutput()
