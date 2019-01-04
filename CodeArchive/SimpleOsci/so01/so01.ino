@@ -97,10 +97,16 @@ void BinProcess(double bin[]) //processes the bins
   low = low  / divisor;
   mid = mid / divisor;
   high = high / divisor;
-  Serial.println(high); 
+  Serial.print(high); 
+  Serial.print(" "); 
+  Serial.print(mid); 
+  Serial.print(" "); 
+  Serial.print(low); 
+  Serial.println(" ");
   ///lows will be blue
   ///mids will be green
   ///highs will be red
+  
 
   LightOutput(low, mid, high);
 }
