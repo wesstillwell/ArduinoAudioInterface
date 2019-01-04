@@ -9,7 +9,7 @@
 
 //spektrum weights
 #define wBASS 3
-#define wMID 1
+#define wMID 0.5
 #define wTREBLE 1
 
 arduinoFFT FFT = arduinoFFT();
@@ -100,7 +100,7 @@ void BinProcess(double bin[], double peak) //processes the bins
         {
           bass = bass + bin[i];
         }
-        else if(i > 43)
+        else if(i > 38)
         {
           treble = treble + bin[i];
         }
@@ -114,18 +114,18 @@ void BinProcess(double bin[], double peak) //processes the bins
     //get the average of bass mid and treble then convert it to about a 255 range
     bass = (bass / 20)/ wBASS;
     mid = (mid / 22) / wMID;
-    treble = (treble / 22)/wTREBLE ;
+    treble = (treble / 27)/wTREBLE ;
 
   bass = Cutoff(bass);
   mid = Cutoff(mid);
   treble = Cutoff(treble);
     
   Serial.print(treble); 
-  Serial.print("h "); 
+  Serial.print("t "); 
   Serial.print(mid); 
   Serial.print("m "); 
   Serial.print(bass); 
-  Serial.println("l ");
+  Serial.println("b ");
   ///basss will be blue
   ///mids will be green
   ///trebles will be red
