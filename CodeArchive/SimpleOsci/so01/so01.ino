@@ -6,12 +6,7 @@
 #define PRED 11
 #define PBLUE 10
 #define PGREEN 9
-
-//spektrum weights
-#define wBASS 3
-#define wMID 0.5
-#define wTREBLE 1
-
+ 
 arduinoFFT FFT = arduinoFFT();
  
 unsigned int sampling_period_us;
@@ -19,28 +14,21 @@ unsigned long microseconds;
  
 double vReal[SAMPLES];
 double vImag[SAMPLES];
-
-unsigned int bass = 0;
-unsigned int mid = 0;
-unsigned int treble= 0;
  
 void setup() {
     Serial.begin(115200);
-    pinMode(PRED, OUTPUT); 
-    pinMode(PBLUE, OUTPUT); 
-    pinMode(PGREEN, OUTPUT); 
-    
+ 
     sampling_period_us = round(1000000*(1.0/SAMPLING_FREQUENCY));
 }
  
 void loop() {
-   LightOutput();
+   
     /*SAMPLING*/
     for(int i=0; i<SAMPLES; i++)
     {
-        microseconds = micros();    //Overfbasss after around 70 minutes!
+        microseconds = micros();    //Overflows after around 70 minutes!
      
-        vReal[i] = analogRead(0);
+        vReal[i] = analogRead(A0);
         vImag[i] = 0;
      
         while(micros() < (microseconds + sampling_period_us)){
@@ -54,8 +42,9 @@ void loop() {
     double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY);
  
     /*PRINT RESULTS*/
-    //Serial.println(peak);     //Print out what frequency is the most dominant.
- 
+    Serial.println(" ");
+    Serial.println(peak);     //Print out what frequency is the most dominant.
+    Serial.println(" ");
     for(int i=0; i<(SAMPLES/2); i++)
     {
         /*View all these three lines in serial terminal to see which frequencies has which amplitudes*/
@@ -65,89 +54,67 @@ void loop() {
         //Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
     }
     
-    BinProcess( vReal, peak);
+    BinProcess( vReal);
 
     
     //delay(1000);  //Repeat the process every second OR:
     //while(1);       //Run code once
 }
 
-void BinProcess(double bin[], double peak) //processes the bins
+void BinProcess(double bin[]) //processes the bins
 {
-  
   ///3 colours = 3 frequency ranges
-  ///basspass kills everything abovee 840Hz
+  ///lowpass kills everything abovee 840Hz
   ///fg = 846Hz, ~840
   ///ex = 280Hz per category, yet bass should have more visual feedback
-  ///bass : 0 - 350Hz
+  ///low : 0 - 350Hz
   ///mid : 351Hz - 680Hz
-  ///treble: 681Hz - 800Hz
-
-  //for test purposes im just gonna divide the band by 3, so 128/2 / 3
+  ///high: 681Hz - 800Hz
 
   //counters
-  bass = 0;
-  mid = 0;
-  treble= 0;
+  int low;
+  int mid;
+  int high;
 
   double divisor;
   divisor = SAMPLES;
+
   for(int i=0; i<(SAMPLES/2); i++)
+  {
+    if(bin[i] < 351)
     {
-        /*View all these three lines in serial terminal to see which frequencies has which amplitudes*/
-         
-        if(i < 21)
-        {
-          bass = bass + bin[i];
-        }
-        else if(i > 38)
-        {
-          treble = treble + bin[i];
-        }
-        else 
-        {
-          mid = mid + bin[i];
-        }
-        
+      low++;
     }
-
-    //get the average of bass mid and treble then convert it to about a 255 range
-    bass = (bass / 20)/ wBASS;
-    mid = (mid / 22) / wMID;
-    treble = (treble / 27)/wTREBLE ;
-
-  bass = Cutoff(bass);
-  mid = Cutoff(mid);
-  treble = Cutoff(treble);
-    
-  Serial.print(treble); 
-  Serial.print("t "); 
-  Serial.print(mid); 
-  Serial.print("m "); 
-  Serial.print(bass); 
-  Serial.println("b ");
-  ///basss will be blue
-  ///mids will be green
-  ///trebles will be red
-  
-
-  
-}
-
-void LightOutput()
-{
-    analogWrite(PRED, treble);
-    analogWrite(PGREEN, mid);
-    analogWrite(PBLUE, bass);
-}
-
-int Cutoff(int value)
-{
-    if(value > 255)
-    { 
-      return 255;
+    else if( bin[i] > 350 && bin[i] < 681)
+    {
+      mid++;
     }
-
-    return value;
+    else if(bin[i] > 680)
+    {
+      high++;
+    }
       
+  }
+  low = low  / divisor;
+  mid = mid / divisor;
+  high = high / divisor;
+  Serial.print(high); 
+  Serial.print(" "); 
+  Serial.print(mid); 
+  Serial.print(" "); 
+  Serial.print(low); 
+  Serial.println(" ");
+  ///lows will be blue
+  ///mids will be green
+  ///highs will be red
+  
+
+  LightOutput(low, mid, high);
+}
+
+void LightOutput(int low, int mid, int high)
+{
+    analogWrite(PRED, high);
+    analogWrite(PGREEN, mid);
+    analogWrite(PBLUE, low);
 }
