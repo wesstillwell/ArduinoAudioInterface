@@ -15,9 +15,9 @@ unsigned long microseconds;
 double vReal[SAMPLES];
 double vImag[SAMPLES];
 
-unsigned int low = 0;
+unsigned int bass = 0;
 unsigned int mid = 0;
-unsigned int high= 0;
+unsigned int treble= 0;
  
 void setup() {
     Serial.begin(115200);
@@ -30,7 +30,7 @@ void loop() {
     /*SAMPLING*/
     for(int i=0; i<SAMPLES; i++)
     {
-        microseconds = micros();    //Overflows after around 70 minutes!
+        microseconds = micros();    //Overfbasss after around 70 minutes!
      
         vReal[i] = analogRead(0);
         vImag[i] = 0;
@@ -68,64 +68,58 @@ void BinProcess(double bin[], double peak) //processes the bins
 {
   
   ///3 colours = 3 frequency ranges
-  ///lowpass kills everything abovee 840Hz
+  ///basspass kills everything abovee 840Hz
   ///fg = 846Hz, ~840
   ///ex = 280Hz per category, yet bass should have more visual feedback
-  ///low : 0 - 350Hz
+  ///bass : 0 - 350Hz
   ///mid : 351Hz - 680Hz
-  ///high: 681Hz - 800Hz
+  ///treble: 681Hz - 800Hz
+
+  //for test purposes im just gonna divide the band by 3, so 128/2 / 3
 
   //counters
-  low = 0;
+  bass = 0;
   mid = 0;
-  high= 0;
+  treble= 0;
 
   double divisor;
   divisor = SAMPLES;
-
-  if(peak < 351)
-    {
-      low = 125;
-    }
-    else if(peak > 350 && peak < 681)
-    {
-      mid = 125;
-    }
-    else if(peak > 680)
-    {
-      high = 125;
-    }
-
   for(int i=0; i<(SAMPLES/2); i++)
-  {
-    if(bin[i] < 351)
     {
-      low++;
+        /*View all these three lines in serial terminal to see which frequencies has which amplitudes*/
+         
+        if(i < 21)
+        {
+          bass = bass + bin[i];
+        }
+        else if(i > 43)
+        {
+          mid = mid + bin[i];
+        }
+        else 
+        {
+          mid = mid + bin[i];
+        }
+        
     }
-    else if( bin[i] > 350 && bin[i] < 681)
-    {
-      mid++;
-    }
-    else if(bin[i] > 680)
-    {
-      high++;
-    }
+    bass = bass / 20;
+    mid = mid / 22;
+    treble = treble / 22;
 
+    if(bass > 255 || mid > 255 || treble > 255)
+    {
+      Serial.println("OVERFLOW");  
+    }
     
-  }
-  
-  low = low  / divisor;
-  mid = mid / divisor;
-  high = high / divisor;
-  Serial.print(high); 
+  Serial.print(treble); 
   Serial.print("h "); 
   Serial.print(mid); 
   Serial.print("m "); 
-  Serial.print(low); 
+  Serial.print(bass); 
   Serial.println("l ");
-  ///lows will be blue
+  ///basss will be blue
   ///mids will be green
-  ///highs will be red
+  ///trebles will be red
   
 
   LightOutput();
@@ -133,7 +127,7 @@ void BinProcess(double bin[], double peak) //processes the bins
 
 void LightOutput()
 {
-    analogWrite(PRED, high);
+    analogWrite(PRED, treble);
     analogWrite(PGREEN, mid);
-    analogWrite(PBLUE, low);
+    analogWrite(PBLUE, bass);
 }
