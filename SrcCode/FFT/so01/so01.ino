@@ -6,7 +6,12 @@
 #define PRED 11
 #define PBLUE 10
 #define PGREEN 9
- 
+
+//spektrum weights
+#define wBASS 3
+#define wMID 1
+#define wTREBLE 1
+
 arduinoFFT FFT = arduinoFFT();
  
 unsigned int sampling_period_us;
@@ -107,9 +112,9 @@ void BinProcess(double bin[], double peak) //processes the bins
     }
 
     //get the average of bass mid and treble then convert it to about a 255 range
-    bass = (bass / 20)/ 5;
-    mid = (mid / 22) / 5;
-    treble = (treble / 22)/5 ;
+    bass = (bass / 20)/ wBASS;
+    mid = (mid / 22) / wMID;
+    treble = (treble / 22)/wTREBLE ;
 
     if(bass > 255 || mid > 255 || treble > 255)
     {
