@@ -34,8 +34,15 @@ void setup() {
 }
  
 void loop() {
+   
+   Sample();
+   BinProcess( vReal, peak);
    LightOutput();
-    /*SAMPLING*/
+}
+
+void Sample()
+{
+  /*SAMPLING*/
     for(int i=0; i<SAMPLES; i++)
     {
         microseconds = micros();    //Overfbasss after around 70 minutes!
@@ -44,6 +51,7 @@ void loop() {
         vImag[i] = 0;
      
         while(micros() < (microseconds + sampling_period_us)){
+          LightOutput();
         }
     }
  
@@ -65,12 +73,12 @@ void loop() {
         //Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
     }
     
-    BinProcess( vReal, peak);
+    
 
     
     //delay(1000);  //Repeat the process every second OR:
     //while(1);       //Run code once
-}
+  }
 
 void BinProcess(double bin[], double peak) //processes the bins
 {
