@@ -14,6 +14,10 @@ unsigned long microseconds;
  
 double vReal[SAMPLES];
 double vImag[SAMPLES];
+
+unsigned int low = 0;
+unsigned int mid = 0;
+unsigned int high= 0;
  
 void setup() {
     Serial.begin(115200);
@@ -53,15 +57,16 @@ void loop() {
         //Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
     }
     
-    BinProcess( vReal);
+    BinProcess( vReal, peak);
 
     
     //delay(1000);  //Repeat the process every second OR:
     //while(1);       //Run code once
 }
 
-void BinProcess(double bin[]) //processes the bins
+void BinProcess(double bin[], double peak) //processes the bins
 {
+  
   ///3 colours = 3 frequency ranges
   ///lowpass kills everything abovee 840Hz
   ///fg = 846Hz, ~840
@@ -71,12 +76,25 @@ void BinProcess(double bin[]) //processes the bins
   ///high: 681Hz - 800Hz
 
   //counters
-  int low;
-  int mid;
-  int high;
+  low = 0;
+  mid = 0;
+  high= 0;
 
   double divisor;
   divisor = SAMPLES;
+
+  if(peak < 351)
+    {
+      low = 125;
+    }
+    else if(peak > 350 && peak < 681)
+    {
+      mid = 125;
+    }
+    else if(peak > 680)
+    {
+      high = 125;
+    }
 
   for(int i=0; i<(SAMPLES/2); i++)
   {
@@ -92,26 +110,28 @@ void BinProcess(double bin[]) //processes the bins
     {
       high++;
     }
-      
+
+    
   }
+  
   low = low  / divisor;
   mid = mid / divisor;
   high = high / divisor;
   Serial.print(high); 
-  Serial.print(" "); 
+  Serial.print("h "); 
   Serial.print(mid); 
-  Serial.print(" "); 
+  Serial.print("m "); 
   Serial.print(low); 
-  Serial.println(" ");
+  Serial.println("l ");
   ///lows will be blue
   ///mids will be green
   ///highs will be red
   
 
-  LightOutput(low, mid, high);
+  LightOutput();
 }
 
-void LightOutput(int low, int mid, int high)
+void LightOutput()
 {
     analogWrite(PRED, high);
     analogWrite(PGREEN, mid);
