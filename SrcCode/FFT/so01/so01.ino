@@ -102,9 +102,11 @@ void BinProcess(double bin[], double peak) //processes the bins
         }
         
     }
-    bass = bass / 20;
-    mid = mid / 22;
-    treble = treble / 22;
+
+    //get the average of bass mid and treble then convert it to about a 255 range
+    bass = (bass / 20)/800 * 255;
+    mid = (mid / 22)/800 * 255;
+    treble = (treble / 22) /800 * 255;
 
     if(bass > 255 || mid > 255 || treble > 255)
     {
