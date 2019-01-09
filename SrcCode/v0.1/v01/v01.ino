@@ -8,12 +8,15 @@
 #define wBASS 3
 #define wMID 0.5
 #define wTREBLE 1
+#define peakOffset 50
+
 
 //pins for led control outputs
 int PRED  = 10;
 int PBLUE  = 9;
 int PGREEN  = 11;
 
+double currentPeak = 0;
 
 arduinoFFT FFT = arduinoFFT();
  
@@ -72,7 +75,7 @@ void Sample()
     FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);
     FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
     double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY);
- 
+  currentPeak = peak;
     /*PRINT RESULTS*/
     //Serial.println(peak);     //Print out what frequency is the most dominant.
  
@@ -136,6 +139,15 @@ void BinProcess(double bin[]) //processes the bins
         }*/
         
     }
+      if(currentPeak < 200)
+        {
+          bass = bass + peakOffset;
+        }
+        else
+        {
+          mid = mid + peakOffset;
+        }
+    
 
     //get the average of bass mid and treble then convert it to about a 255 range
     bass = (bass / 20)/ wBASS;
@@ -147,11 +159,11 @@ void BinProcess(double bin[]) //processes the bins
   treble = Cutoff(treble);
     
   Serial.print(treble); 
-  Serial.print("t "); 
+  Serial.print(" "); 
   Serial.print(mid); 
-  Serial.print("m "); 
+  Serial.print(" "); 
   Serial.print(bass); 
-  Serial.println("b ");
+  Serial.println("  ");
   ///basss will be blue
   ///mids will be green
   ///trebles will be red
