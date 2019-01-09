@@ -146,12 +146,12 @@ void BinProcess(double bin[]) //processes the bins
   mid = Cutoff(mid);
   treble = Cutoff(treble);
     
-  //Serial.print(treble); 
-  //Serial.print("t "); 
-  //Serial.print(mid); 
-  //Serial.print("m "); 
-  //Serial.print(bass); 
-  //Serial.println("b ");
+  Serial.print(treble); 
+  Serial.print("t "); 
+  Serial.print(mid); 
+  Serial.print("m "); 
+  Serial.print(bass); 
+  Serial.println("b ");
   ///basss will be blue
   ///mids will be green
   ///trebles will be red
