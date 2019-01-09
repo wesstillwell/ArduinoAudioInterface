@@ -3,19 +3,24 @@
 #define SAMPLES 128             //Must be a power of 2
 #define SAMPLING_FREQUENCY 1000 //Hz, must be less than 10000 due to ADC
 
-#define PRED 11
-#define PBLUE 10
-#define PGREEN 9
 
 //spektrum weights
 #define wBASS 3
 #define wMID 0.5
 #define wTREBLE 1
 
+//pins for led control outputs
+int PRED  = 11;
+int PBLUE  = 10;
+int PGREEN  = 9;
+
+
 arduinoFFT FFT = arduinoFFT();
  
 unsigned int sampling_period_us;
 unsigned long microseconds;
+
+unsigned int counter;
  
 double vReal[SAMPLES];
 double vImag[SAMPLES];
@@ -36,8 +41,12 @@ void setup() {
 void loop() {
    
    Sample();
-   BinProcess( vReal, peak);
+   BinProcess( vReal);
    LightOutput();
+   if(microseconds % 30000)
+   {
+    colourSwitch();
+   }
 }
 
 void Sample()
@@ -80,7 +89,7 @@ void Sample()
     //while(1);       //Run code once
   }
 
-void BinProcess(double bin[], double peak) //processes the bins
+void BinProcess(double bin[]) //processes the bins
 {
   
   ///3 colours = 3 frequency ranges
@@ -108,13 +117,19 @@ void BinProcess(double bin[], double peak) //processes the bins
         {
           bass = bass + bin[i];
         }
-        else if(i > 38)
+        if(i > 30)
         {
           treble = treble + bin[i];
         }
-        else 
+        if(i > 15 && i < 35) 
         {
           mid = mid + bin[i];
+        }
+        else
+        {
+          bass = bass + (bin[i] / 4);
+          mid = mid + (bin[i] / 4);
+          treble = treble + (bin[i] / 4);
         }
         
     }
@@ -147,6 +162,18 @@ void LightOutput()
     analogWrite(PRED, treble);
     analogWrite(PGREEN, mid);
     analogWrite(PBLUE, bass);
+}
+
+void colourSwitch()
+{
+    
+  int tempPRED  = PRED;
+  int tempPBLUE  = PBLUE;
+  int tempPGREEN  = PGREEN;
+
+  PBLUE = tempPGREEN;
+  PRED = tempPBLUE;
+  PGREEN = tempPRED;
 }
 
 int Cutoff(int value)
