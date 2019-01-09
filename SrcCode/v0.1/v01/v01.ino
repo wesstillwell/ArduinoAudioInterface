@@ -10,9 +10,9 @@
 #define wTREBLE 1
 
 //pins for led control outputs
-int PRED  = 11;
-int PBLUE  = 10;
-int PGREEN  = 9;
+int PRED  = 10;
+int PBLUE  = 9;
+int PGREEN  = 11;
 
 
 arduinoFFT FFT = arduinoFFT();
@@ -46,7 +46,10 @@ void loop() {
    if(microseconds % 30000)
    {
     colourSwitch();
+    Serial.println("1");
    }
+   else{
+    Serial.println("0");}
 }
 
 void Sample()
@@ -121,16 +124,16 @@ void BinProcess(double bin[]) //processes the bins
         {
           treble = treble + bin[i];
         }
-        if(i > 15 && i < 35) 
+        if(i > 17 && i < 35) 
         {
           mid = mid + bin[i];
         }
-        else
+        /*else
         {
           bass = bass + (bin[i] / 4);
           mid = mid + (bin[i] / 4);
           treble = treble + (bin[i] / 4);
-        }
+        }*/
         
     }
 
@@ -143,12 +146,12 @@ void BinProcess(double bin[]) //processes the bins
   mid = Cutoff(mid);
   treble = Cutoff(treble);
     
-  Serial.print(treble); 
-  Serial.print("t "); 
-  Serial.print(mid); 
-  Serial.print("m "); 
-  Serial.print(bass); 
-  Serial.println("b ");
+  //Serial.print(treble); 
+  //Serial.print("t "); 
+  //Serial.print(mid); 
+  //Serial.print("m "); 
+  //Serial.print(bass); 
+  //Serial.println("b ");
   ///basss will be blue
   ///mids will be green
   ///trebles will be red
