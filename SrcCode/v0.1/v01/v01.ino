@@ -49,10 +49,10 @@ void loop() {
    if(microseconds % 30000)
    {
     colourSwitch();
-    Serial.println("1");
+    //Serial.println("1");
    }
    else{
-    Serial.println("0");}
+    //Serial.println("0");}
 }
 
 void Sample()

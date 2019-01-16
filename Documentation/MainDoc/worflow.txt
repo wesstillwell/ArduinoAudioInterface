@@ -1,0 +1,6 @@
+Documentation
+-Started documentation
+-found arduino frequency libary
+-fft, fun times
+-uses arduinofft by enrique condes
+
